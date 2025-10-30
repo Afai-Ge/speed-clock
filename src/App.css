@@ -1,50 +1,177 @@
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
-}
-
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
-}
-
-@keyframes logo-spin {
+@keyframes fadeInUp {
   from {
-    transform: rotate(0deg);
+    opacity: 0;
+    transform: translateY(30px);
   }
   to {
-    transform: rotate(360deg);
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
-.card {
-  padding: 2em;
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
-.read-the-docs {
-  color: #888;
+@keyframes shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
+}
+
+.app {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100vh;
+  width: 100%;
+  padding: 2.5rem 1.5rem;
+  gap: 2.5rem;
+  overflow: scroll;
+  position: relative;
+}
+
+header {
+  text-align: center;
+  width: 100%;
+  animation: fadeInDown 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+header h1 {
+  position: relative;
+  display: inline-block;
+  padding: 0.5rem 0;
+}
+
+header h1::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60%;
+  height: 4px;
+  background: linear-gradient(90deg,
+    transparent,
+    var(--primary-color),
+    transparent
+  );
+  border-radius: 2px;
+  /* animation: shimmer 3s ease-in-out infinite; */
+}
+
+main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2.5rem;
+  width: 100%;
+  max-width: 1200px;
+  animation: fadeInUp 0.8s cubic-bezier(0.4, 0, 0.2, 1) 0.2s backwards;
 }
 
 .clocks-container {
   display: flex;
   width: 100%;
-  justify-content: space-around;
-  align-items: center;
-  gap: 20px;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 2.5rem;
+  flex-wrap: wrap;
+  animation: scaleIn 0.8s cubic-bezier(0.4, 0, 0.2, 1) 0.4s backwards;
+}
+
+.clocks-container > * {
+  animation: fadeInUp 0.6s cubic-bezier(0.4, 0, 0.2, 1) backwards;
+}
+
+.clocks-container > *:nth-child(1) {
+  animation-delay: 0.5s;
+}
+
+.clocks-container > *:nth-child(2) {
+  animation-delay: 0.65s;
+}
+
+/* 响应式布局 */
+@media (max-width: 768px) {
+  .app {
+    padding: 1.5rem 1rem;
+    gap: 2rem;
+  }
+
+  header h1::after {
+    width: 80%;
+  }
+
+  h1 {
+    font-size: 2rem;
+  }
+
+  .clocks-container {
+    flex-direction: column;
+    align-items: center;
+    gap: 2rem;
+  }
+
+  main {
+    gap: 2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .app {
+    padding: 1rem 0.75rem;
+    gap: 1.5rem;
+  }
+
+  h1 {
+    font-size: 1.8rem;
+  }
+
+  header h1::after {
+    width: 90%;
+    height: 3px;
+  }
+
+  .clocks-container {
+    gap: 1.5rem;
+  }
+
+  main {
+    gap: 1.5rem;
+  }
+}
+
+/* 性能优化 - 减少重绘 */
+* {
+  will-change: auto;
+}
+
+.app,
+header,
+main,
+.clocks-container {
+  backface-visibility: hidden;
+  perspective: 1000px;
 }

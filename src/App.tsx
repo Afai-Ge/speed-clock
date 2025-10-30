@@ -2,7 +2,7 @@ import "./App.css";
 import { TimeProvider } from "./context/TimeContext";
 import Clock from "./components/Clock";
 import TimeDifference from "./components/TimeDifference";
-import Controlpanel from "./components/ContralPanel";
+import ControlPanel from "./components/ControlPanel";
 
 function App() {
   return (
@@ -17,9 +17,10 @@ function App() {
             <Clock type="fast"></Clock>
           </div>
           <TimeDifference />
-          <Controlpanel />
         </main>
       </div>
+      {/* 浮动控制按钮移到 .app 外面,确保固定在视口 */}
+      <ControlPanel />
     </TimeProvider>
   );
 }
