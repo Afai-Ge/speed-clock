@@ -28,8 +28,8 @@ const TimeDifference: React.FC = () => {
   const isPositive = timeDifference >= 0;
 
   // 计算进度百分比 (假设最大差异为1小时 = 3600秒)
-  const maxDiff = 3600;
-  const progress = Math.min((Math.abs(timeDifference) / maxDiff) * 100, 100);
+  // const maxDiff = 3600;
+  // const progress = Math.min((Math.abs(timeDifference) / maxDiff) * 100, 100);
 
   return (
     <DifferenceContainer>
@@ -311,60 +311,60 @@ const Value = styled.div<{ $isPositive: boolean }>`
   }
 `;
 
-const ProgressBarContainer = styled.div`
-  position: relative;
-  width: 100%;
-  height: 12px;
-  background: rgba(0, 0, 0, 0.1);
-  border-radius: 20px;
-  overflow: hidden;
-  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.2);
-`;
+// const ProgressBarContainer = styled.div`
+//   position: relative;
+//   width: 100%;
+//   height: 12px;
+//   background: rgba(0, 0, 0, 0.1);
+//   border-radius: 20px;
+//   overflow: hidden;
+//   box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.2);
+// `;
 
-const progressAnimation = keyframes`
-  0% { transform: translateX(-100%); }
-  100% { transform: translateX(0); }
-`;
+// const progressAnimation = keyframes`
+//   0% { transform: translateX(-100%); }
+//   100% { transform: translateX(0); }
+// `;
 
-const ProgressBar = styled.div<{ $isPositive: boolean; $progress: number }>`
-  height: 100%;
-  width: ${(props) => props.$progress}%;
-  background: ${(props) =>
-    props.$isPositive
-      ? "linear-gradient(90deg, #a8e6cf 0%, #56ab91 100%)"
-      : "linear-gradient(90deg, #ff6b6b 0%, #ff8787 100%)"};
-  border-radius: 20px;
-  transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 0 15px
-    ${(props) =>
-      props.$isPositive
-        ? "rgba(168, 230, 207, 0.6)"
-        : "rgba(255, 107, 107, 0.6)"};
-  animation: ${progressAnimation} 0.8s ease;
-`;
+// const ProgressBar = styled.div<{ $isPositive: boolean; $progress: number }>`
+//   height: 100%;
+//   width: ${(props) => props.$progress}%;
+//   background: ${(props) =>
+//     props.$isPositive
+//       ? "linear-gradient(90deg, #a8e6cf 0%, #56ab91 100%)"
+//       : "linear-gradient(90deg, #ff6b6b 0%, #ff8787 100%)"};
+//   border-radius: 20px;
+//   transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+//   box-shadow: 0 0 15px
+//     ${(props) =>
+//       props.$isPositive
+//         ? "rgba(168, 230, 207, 0.6)"
+//         : "rgba(255, 107, 107, 0.6)"};
+//   animation: ${progressAnimation} 0.8s ease;
+// `;
 
-const ProgressGlow = styled.div<{ $isPositive: boolean; $progress: number }>`
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 100%;
-  width: ${(props) => props.$progress}%;
-  background: ${(props) =>
-    props.$isPositive
-      ? "linear-gradient(90deg, transparent, rgba(168, 230, 207, 0.4), transparent)"
-      : "linear-gradient(90deg, transparent, rgba(255, 107, 107, 0.4), transparent)"};
-  border-radius: 20px;
-  animation: shimmer 2s infinite;
+// const ProgressGlow = styled.div<{ $isPositive: boolean; $progress: number }>`
+//   position: absolute;
+//   top: 0;
+//   left: 0;
+//   height: 100%;
+//   width: ${(props) => props.$progress}%;
+//   background: ${(props) =>
+//     props.$isPositive
+//       ? "linear-gradient(90deg, transparent, rgba(168, 230, 207, 0.4), transparent)"
+//       : "linear-gradient(90deg, transparent, rgba(255, 107, 107, 0.4), transparent)"};
+//   border-radius: 20px;
+//   animation: shimmer 2s infinite;
 
-  @keyframes shimmer {
-    0% {
-      transform: translateX(-100%);
-    }
-    100% {
-      transform: translateX(100%);
-    }
-  }
-`;
+//   @keyframes shimmer {
+//     0% {
+//       transform: translateX(-100%);
+//     }
+//     100% {
+//       transform: translateX(100%);
+//     }
+//   }
+// `;
 
 const BottomInfo = styled.div`
   display: flex;

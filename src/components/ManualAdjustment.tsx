@@ -175,16 +175,16 @@ const glow = keyframes`
   50% { opacity: 1; }
 `;
 
-const ripple = keyframes`
-  0% {
-    transform: scale(0);
-    opacity: 1;
-  }
-  100% {
-    transform: scale(2);
-    opacity: 0;
-  }
-`;
+// const ripple = keyframes`
+//   0% {
+//     transform: scale(0);
+//     opacity: 1;
+//   }
+//   100% {
+//     transform: scale(2);
+//     opacity: 0;
+//   }
+// `;
 
 const Container = styled.div`
   display: flex;
