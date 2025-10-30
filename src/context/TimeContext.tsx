@@ -38,7 +38,7 @@ export const TimeProvider: React.FC<{ children: React.ReactNode }> = ({
         setStandardTime(newStandardTime);
         setFastTime((prev) => prev.add(elapsedSeconds * speedRatio, "second"));
 
-        const currentDiff = fastTime.diff(newStandardTime, "second", true);
+        // const currentDiff = fastTime.diff(newStandardTime, "second", true);
         setTotalDifference((prev) => prev + elapsedSeconds * (speedRatio - 1));
 
         lastTime = currentTime;
