@@ -2,7 +2,7 @@ import React from "react";
 import { useTime } from "../context/TimeContext";
 
 const TimeDifference: React.FC = () => {
-  const { timeDifference, totalDifference } = useTime();
+  const { timeDifference } = useTime();
 
   const formatDifference = (seconds: number): string => {
     const absSeconds = Math.abs(seconds);

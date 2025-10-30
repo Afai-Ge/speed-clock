@@ -1,6 +1,3 @@
-import { useState, useEffect } from "react";
-import reactLogo from "./assets/react.svg";
-import viteLogo from "/vite.svg";
 import "./App.css";
 import { TimeProvider } from "./context/TimeContext";
 import Clock from "./components/Clock";
@@ -8,8 +5,6 @@ import TimeDifference from "./components/TimeDifference";
 import Controlpanel from "./components/ContralPanel";
 
 function App() {
-  const [count, setCount] = useState(0);
-
   return (
     <TimeProvider>
       <div className="app">
