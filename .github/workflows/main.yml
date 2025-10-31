@@ -1,31 +1,47 @@
-name: Build and Deploy to GitHub Pages
+name: Deploy to GitHub Pages
 
+# 触发条件
 on:
   push:
-    branches: [ "main" ]
+    branches: [main]   # 如果你的主分支叫 master，改成 [master]
+
+# 权限：给 GITHUB_TOKEN 写 contents 和写 pages 的权限
+permissions:
+  contents: write
+  pages: write
+  id-token: write
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
+      # 1. 拉代码
+      - name: Checkout
+        uses: actions/checkout@v4
 
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '18'
+      # 2. 装 Node
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm   # 有 lock 文件可加速
 
-    - name: Install dependencies
-      run: npm ci
+      # 3. 装依赖 & 打包
+      - name: Install dependencies
+        run: npm ci
 
-    - name: Build project
-      run: npm run build
+      - name: Build
+        run: npm run build
+        env:
+          # 如果 Vite 配置里用了环境变量可以在这里注入
+          NODE_ENV: production
 
-    - name: Deploy to GitHub Pages
-      uses: peaceiris/actions-gh-pages@v3
-      with:
-        github_token: ${{ secrets.CLOCKER }}
-        publish_dir: ./dist # Vite 默认构建输出目录
-        publish_branch: gh-pages
+      # 4. 部署到 gh-pages 分支
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.CLOCKER }}
+          publish_dir: ./dist        # Vite 默认输出目录
+          publish_branch: gh-pages   # 目标分支
+          force_orphan: true         # 保持 gh-pages 分支只有一条提交记录，干净

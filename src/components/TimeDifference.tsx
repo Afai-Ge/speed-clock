@@ -61,19 +61,19 @@ const TimeDifference: React.FC = () => {
 
         <BottomInfo>
           <Indicator $isPositive={isPositive}>
-            <IndicatorIcon>
-              {isPositive ? (
+            <IndicatorIcon $isPositive={isPositive} src={isPositive ? "/speed-clock/icons/arrow_up.png" : "/speed-clock/icons/arrow_down.png"} alt={isPositive ? "向上箭头" : "向下箭头"}>
+              {/* {isPositive ? (
                 <img src="/speed-clock/icons/arrow_up.png" alt="向上箭头" />
               ) : (
                 <img src="/speed-clock/icons/arrow_down.png" alt="向下箭头" />
-              )}
+              )} */}
             </IndicatorIcon>
             {isPositive ? "快表领先" : "快表落后"}
           </Indicator>
           <Stats>
             <StatItem>
               <StatLabel>秒数</StatLabel>
-              <StatValue>{Math.abs(timeDifference)}</StatValue>
+              <StatValue>{Math.abs(timeDifference).toLocaleString()} s</StatValue>
             </StatItem>
           </Stats>
         </BottomInfo>
@@ -396,9 +396,12 @@ const Indicator = styled.div<{ $isPositive: boolean }>`
   letter-spacing: 0.05em;
 `;
 
-const IndicatorIcon = styled.span`
+const IndicatorIcon = styled.img<{ $isPositive: boolean }>`
   font-size: 1.2rem;
   animation: bounce 1.5s ease-in-out infinite;
+
+  width: 24px;
+  height: 24px;
 
   @keyframes bounce {
     0%,

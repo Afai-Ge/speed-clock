@@ -39,7 +39,8 @@ const Clock: React.FC<ClockProps> = ({ type }) => {
           $type={type}
           title={isCompactMode ? "切换到详情模式" : "切换到简洁模式"}
         >
-          <img src="/icons/suofang.png" alt="缩放" />
+          {/* <img src="/speed-clock/icons/suofang.png" alt="缩放" /> */}
+          <ModeIcon src="/speed-clock/icons/suofang.png" alt="缩放"></ModeIcon>
         </ModeToggleButton>
       </ClockHeader>
 
@@ -196,7 +197,11 @@ const ModeToggleButton = styled.div<{ $type: string }>`
       props.$type === "standard"
         ? "rgba(78, 205, 196, 0.4)"
         : "rgba(255, 107, 129, 0.4)"};
-  background: rgba(255, 255, 255, 0.8);
+  background: ${(props) =>
+      props.$type === "standard"
+        ? "rgba(78, 205, 196, 0.4)"
+        : "rgba(255, 107, 129, 0.4)"};
+  // background: rgba(255, 255, 255, 0.8);
   font-size: 1.1rem;
   display: flex;
   align-items: center;
@@ -245,8 +250,8 @@ const ModeToggleButton = styled.div<{ $type: string }>`
   }
 
   @media (max-width: 768px) {
-    width: 48px;
-    height: 48px;
+    width: 42px;
+    height: 42px;
     font-size: 1rem;
   }
 
@@ -254,6 +259,18 @@ const ModeToggleButton = styled.div<{ $type: string }>`
     width: 36px;
     height: 36px;
     font-size: 0.9rem;
+  }
+`;
+
+const ModeIcon = styled.img`
+  width: 30px;
+
+  @media (max-width: 768px) {
+    width: 24px;
+  }
+
+  @media (max-width: 480px) {
+    width: 20px;
   }
 `;
 

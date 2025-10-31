@@ -6,9 +6,24 @@ import styled, { keyframes } from "styled-components";
 const ControlPanel: React.FC = () => {
   const { isRunning, toggleRunning, reset } = useTime();
   const [showModal, setShowModal] = useState(false);
+  const [showResetConfirm, setShowResetConfirm] = useState(false);
 
   const getStatusText = () => {
     return isRunning ? "运行中" : "已暂停";
+  };
+
+  // 处理重置确认
+  const handleResetClick = () => {
+    setShowResetConfirm(true);
+  };
+
+  const handleResetConfirm = () => {
+    reset();
+    setShowResetConfirm(false);
+  };
+
+  const handleResetCancel = () => {
+    setShowResetConfirm(false);
   };
 
   return (
@@ -20,7 +35,12 @@ const ControlPanel: React.FC = () => {
           onClick={() => setShowModal(true)}
           title="打开控制面板"
         >
-          <ButtonIcon>⚙️</ButtonIcon>
+          <ButtonIcon>
+            <ButtonImg
+              src="/speed-clock/icons/setting.png"
+              alt="设置"
+            ></ButtonImg>
+          </ButtonIcon>
           <ButtonGlow $variant="primary" />
         </ControlButton>
         <ControlButton
@@ -28,11 +48,25 @@ const ControlPanel: React.FC = () => {
           onClick={toggleRunning}
           title={isRunning ? "暂停" : "继续"}
         >
-          <ButtonIcon>{isRunning ? "⏸️" : "▶️"}</ButtonIcon>
+          <ButtonIcon>
+            <ButtonImg
+              src={
+                isRunning
+                  ? "/speed-clock/icons/stop.png"
+                  : "/speed-clock/icons/play.png"
+              }
+              alt={isRunning ? "暂停" : "继续"}
+            ></ButtonImg>
+          </ButtonIcon>
           <ButtonGlow $variant={isRunning ? "warning" : "success"} />
         </ControlButton>
-        <ControlButton $variant="secondary" onClick={reset} title="重置">
-          <ButtonIcon>🔄</ButtonIcon>
+        <ControlButton $variant="secondary" onClick={handleResetClick} title="重置">
+          <ButtonIcon>
+            <ButtonImg
+              src="/speed-clock/icons/refresh.png"
+              alt="重置"
+            ></ButtonImg>
+          </ButtonIcon>
           <ButtonGlow $variant="secondary" />
         </ControlButton>
       </FloatingControls>
@@ -68,16 +102,42 @@ const ControlPanel: React.FC = () => {
                 <FooterIcon>{isRunning ? "s" : "▶️"}</FooterIcon>
                 {isRunning ? "暂停" : "继续"}
               </FooterButton>
-              <FooterButton $variant="danger" onClick={reset}>
+              <FooterButton $variant="danger" onClick={handleResetClick}>
                 <FooterIcon>🔄</FooterIcon>
                 重置
               </FooterButton>
-              <FooterButton $variant="primary" onClick={() => setShowModal(false)}>
+              <FooterButton
+                $variant="primary"
+                onClick={() => setShowModal(false)}
+              >
                 <FooterIcon>✓</FooterIcon>
                 完成
               </FooterButton>
             </ModalFooter>
           </ModalContent>
+        </ModalOverlay>
+      )}
+
+      {/* 重置确认对话框 */}
+      {showResetConfirm && (
+        <ModalOverlay onClick={handleResetCancel}>
+          <ConfirmDialog onClick={(e) => e.stopPropagation()}>
+            <ConfirmIcon>⚠️</ConfirmIcon>
+            <ConfirmTitle>确认重置</ConfirmTitle>
+            <ConfirmMessage>
+              重置将把两个时钟都恢复到当前系统时间,
+              <br />
+              此操作无法撤销,确定要继续吗?
+            </ConfirmMessage>
+            <ConfirmButtons>
+              <ConfirmButton $variant="cancel" onClick={handleResetCancel}>
+                取消
+              </ConfirmButton>
+              <ConfirmButton $variant="confirm" onClick={handleResetConfirm}>
+                确认重置
+              </ConfirmButton>
+            </ConfirmButtons>
+          </ConfirmDialog>
         </ModalOverlay>
       )}
     </>
@@ -121,58 +181,113 @@ const slideUp = keyframes`
   }
 `;
 
-const float = keyframes`
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-5px); }
+// 弹性浮动动画
+const elasticFloat = keyframes`
+  0%, 100% {
+    transform: translateY(0) scale(1);
+  }
+  50% {
+    transform: translateY(-8px) scale(1.02);
+  }
+`;
+
+// 光晕呼吸动画
+// const breathe = keyframes`
+//   0%, 100% {
+//     box-shadow:
+//       0 4px 20px rgba(0, 0, 0, 0.15),
+//       0 2px 8px rgba(0, 0, 0, 0.1),
+//       0 0 0 0 rgba(255, 107, 129, 0);
+//   }
+//   50% {
+//     box-shadow:
+//       0 8px 30px rgba(0, 0, 0, 0.2),
+//       0 4px 12px rgba(0, 0, 0, 0.15),
+//       0 0 20px 5px rgba(255, 107, 129, 0.3);
+//   }
+// `;
+
+// 图标旋转脉冲
+const iconPulse = keyframes`
+  0%, 100% {
+    transform: scale(1) rotate(0deg);
+  }
+  25% {
+    transform: scale(1.1) rotate(-5deg);
+  }
+  75% {
+    transform: scale(1.1) rotate(5deg);
+  }
 `;
 
 // 浮动控制按钮
 const FloatingControls = styled.div`
   position: fixed;
   bottom: 2rem;
-  left: 2rem;
+  right: 2rem;
   display: flex;
   flex-direction: column;
   gap: 1rem;
   z-index: 1000;
-  animation: ${float} 4s ease-in-out infinite;
+
+  /* 为每个按钮添加延迟的弹性浮动动画 */
+  & > button:nth-child(1) {
+    animation: ${elasticFloat} 3s ease-in-out infinite;
+  }
+
+  & > button:nth-child(2) {
+    animation: ${elasticFloat} 3s ease-in-out 0.3s infinite;
+  }
+
+  & > button:nth-child(3) {
+    animation: ${elasticFloat} 3s ease-in-out 0.6s infinite;
+  }
 
   @media (max-width: 768px) {
     bottom: 1rem;
-    left: 1rem;
+    right: 1rem;
     flex-direction: row;
   }
 `;
 
 const ButtonGlow = styled.div<{ $variant: string }>`
   position: absolute;
-  inset: -4px;
+  inset: -8px;
   border-radius: 50%;
   opacity: 0;
-  transition: opacity 0.3s ease;
+  transition: opacity 0.4s ease;
   z-index: 0;
+  filter: blur(12px);
 
   ${(props) => {
     switch (props.$variant) {
       case "primary":
-        return `background: radial-gradient(circle, rgba(255, 107, 129, 0.6) 0%, transparent 70%);`;
+        return `background: radial-gradient(circle, rgba(255, 107, 129, 0.8) 0%, transparent 70%);`;
       case "success":
-        return `background: radial-gradient(circle, rgba(168, 230, 207, 0.6) 0%, transparent 70%);`;
+        return `background: radial-gradient(circle, rgba(168, 230, 207, 0.8) 0%, transparent 70%);`;
       case "warning":
-        return `background: radial-gradient(circle, rgba(255, 217, 61, 0.6) 0%, transparent 70%);`;
+        return `background: radial-gradient(circle, rgba(255, 217, 61, 0.8) 0%, transparent 70%);`;
       case "secondary":
-        return `background: radial-gradient(circle, rgba(78, 205, 196, 0.6) 0%, transparent 70%);`;
+        return `background: radial-gradient(circle, rgba(78, 205, 196, 0.8) 0%, transparent 70%);`;
       default:
-        return `background: radial-gradient(circle, rgba(255, 107, 129, 0.6) 0%, transparent 70%);`;
+        return `background: radial-gradient(circle, rgba(255, 107, 129, 0.8) 0%, transparent 70%);`;
     }
   }}
 `;
 
 const ButtonIcon = styled.span`
   font-size: 1.5rem;
-  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+
+const ButtonImg = styled.img`
+  width: 36px;
+  height: 36px;
 `;
 
 const ControlButton = styled.button<{ $variant: string }>`
@@ -185,10 +300,10 @@ const ControlButton = styled.button<{ $variant: string }>`
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15),
-              0 2px 8px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15), 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
   overflow: visible;
+  backdrop-filter: blur(10px);
 
   ${(props) => {
     switch (props.$variant) {
@@ -220,23 +335,45 @@ const ControlButton = styled.button<{ $variant: string }>`
     }
   }}
 
+  /* 添加内部光泽效果 */
+  &::before {
+    content: "";
+    position: absolute;
+    left: 0 !important;
+    top: 0;
+    inset: 2px;
+    border-radius: 50%;
+    background: linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.3) 0%,
+      transparent 50%
+    );
+    opacity: 0.6;
+    z-index: 0;
+    transition: opacity 0.4s ease;
+  }
+
   &:hover {
-    transform: scale(1.15) translateY(-2px);
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.25),
-                0 4px 12px rgba(0, 0, 0, 0.15);
+    transform: scale(1.2) translateY(-4px);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3), 0 6px 16px rgba(0, 0, 0, 0.2);
+
+    &::before {
+      opacity: 0.9;
+    }
 
     ${ButtonIcon} {
-      transform: scale(1.1) rotate(15deg);
+      animation: ${iconPulse} 0.6s ease-in-out;
     }
 
     ${ButtonGlow} {
       opacity: 1;
-      animation: ${glow} 2s ease-in-out infinite;
+      animation: ${glow} 1.5s ease-in-out infinite;
     }
   }
 
   &:active {
-    transform: scale(1.05);
+    transform: scale(1.1) translateY(-2px);
+    transition: all 0.1s ease;
   }
 
   @media (max-width: 768px) {
@@ -280,20 +417,21 @@ const StatusIndicator = styled.div<{ $isRunning: boolean }>`
   backdrop-filter: blur(20px);
   border-radius: 24px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1),
-              inset 0 1px 2px rgba(255, 255, 255, 0.5);
+    inset 0 1px 2px rgba(255, 255, 255, 0.5);
   font-size: 0.9rem;
   font-weight: 700;
-  color: ${(props) =>
-    props.$isRunning ? "#56ab91" : "#ff6b6b"};
+  color: ${(props) => (props.$isRunning ? "#56ab91" : "#ff6b6b")};
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  border: 2px solid ${(props) =>
-    props.$isRunning ? "rgba(168, 230, 207, 0.4)" : "rgba(255, 107, 107, 0.4)"};
+  border: 2px solid
+    ${(props) =>
+      props.$isRunning
+        ? "rgba(168, 230, 207, 0.4)"
+        : "rgba(255, 107, 107, 0.4)"};
 
   &:hover {
     transform: translateY(-2px);
     box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
-    border-color: ${(props) =>
-      props.$isRunning ? "#56ab91" : "#ff6b6b"};
+    border-color: ${(props) => (props.$isRunning ? "#56ab91" : "#ff6b6b")};
   }
 `;
 
@@ -305,8 +443,11 @@ const StatusDot = styled.span<{ $isRunning: boolean }>`
     props.$isRunning
       ? "linear-gradient(135deg, #a8e6cf 0%, #56ab91 100%)"
       : "linear-gradient(135deg, #ff6b6b 0%, #ff8787 100%)"};
-  box-shadow: 0 0 8px ${(props) =>
-    props.$isRunning ? "rgba(168, 230, 207, 0.6)" : "rgba(255, 107, 107, 0.6)"};
+  box-shadow: 0 0 8px
+    ${(props) =>
+      props.$isRunning
+        ? "rgba(168, 230, 207, 0.6)"
+        : "rgba(255, 107, 107, 0.6)"};
   animation: ${(props) => (props.$isRunning ? pulse : "none")} 2s infinite;
 `;
 
@@ -327,8 +468,7 @@ const ModalOverlay = styled.div`
 const ModalContent = styled.div`
   background: var(--card-bg);
   border-radius: 28px;
-  box-shadow: 0 25px 80px rgba(0, 0, 0, 0.4),
-              0 10px 30px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 25px 80px rgba(0, 0, 0, 0.4), 0 10px 30px rgba(0, 0, 0, 0.2);
   width: 100%;
   max-width: 650px;
   max-height: 90vh;
@@ -418,7 +558,7 @@ const CloseButton = styled.button`
   overflow: hidden;
 
   &::before {
-    content: '';
+    content: "";
     position: absolute;
     inset: 0;
     background: var(--primary-gradient);
@@ -527,10 +667,14 @@ const FooterButton = styled.button<{ $variant: string }>`
   }}
 
   &::before {
-    content: '';
+    content: "";
     position: absolute;
     inset: 0;
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, transparent 100%);
+    background: linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.2) 0%,
+      transparent 100%
+    );
     opacity: 0;
     transition: opacity 0.3s ease;
   }
@@ -558,6 +702,122 @@ const FooterButton = styled.button<{ $variant: string }>`
       transform: scale(1.2);
     }
   }
+
+  &:active {
+    transform: translateY(-1px) scale(0.98);
+  }
+
+  & > * {
+    position: relative;
+    z-index: 1;
+  }
+`;
+
+// 确认对话框样式
+const ConfirmDialog = styled.div`
+  background: var(--card-bg);
+  border-radius: 24px;
+  padding: 2.5rem;
+  width: 90%;
+  max-width: 450px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5),
+              0 8px 20px rgba(0, 0, 0, 0.3);
+  animation: ${slideUp} 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  text-align: center;
+
+  @media (max-width: 768px) {
+    padding: 2rem;
+    max-width: 95%;
+  }
+`;
+
+const ConfirmIcon = styled.div`
+  font-size: 3.5rem;
+  margin-bottom: 1rem;
+  animation: ${iconPulse} 0.8s ease-in-out infinite;
+`;
+
+const ConfirmTitle = styled.h3`
+  font-size: 1.8rem;
+  font-weight: 800;
+  background: var(--primary-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin: 0 0 1rem 0;
+  letter-spacing: 0.02em;
+`;
+
+const ConfirmMessage = styled.p`
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--text-color);
+  opacity: 0.85;
+  margin: 0 0 2rem 0;
+`;
+
+const ConfirmButtons = styled.div`
+  display: flex;
+  gap: 1rem;
+
+  @media (max-width: 480px) {
+    flex-direction: column;
+  }
+`;
+
+const ConfirmButton = styled.button<{ $variant: 'cancel' | 'confirm' }>`
+  flex: 1;
+  padding: 1rem 1.5rem;
+  border: none;
+  border-radius: 14px;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+
+  ${(props) => {
+    if (props.$variant === 'cancel') {
+      return `
+        background: rgba(150, 150, 150, 0.15);
+        color: var(--text-color);
+        border: 2px solid rgba(150, 150, 150, 0.3);
+
+        &:hover {
+          background: rgba(150, 150, 150, 0.25);
+          border-color: rgba(150, 150, 150, 0.5);
+          transform: translateY(-2px);
+          box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+        }
+      `;
+    } else {
+      return `
+        background: linear-gradient(135deg, #ff6b6b 0%, #ff8787 100%);
+        color: white;
+        box-shadow: 0 4px 15px rgba(255, 107, 107, 0.4);
+
+        &::before {
+          content: '';
+          position: absolute;
+          inset: 0;
+          background: linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, transparent 100%);
+          opacity: 0;
+          transition: opacity 0.3s ease;
+        }
+
+        &:hover {
+          transform: translateY(-3px);
+          box-shadow: 0 8px 25px rgba(255, 107, 107, 0.5);
+
+          &::before {
+            opacity: 1;
+          }
+        }
+      `;
+    }
+  }}
 
   &:active {
     transform: translateY(-1px) scale(0.98);
